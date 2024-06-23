@@ -27,6 +27,11 @@ public class Session extends BaseEntity {
     private Long maxApplier;
     @Column(name = "is_full")
     private Boolean isFull;
+
+
+    public void setFull() {
+        this.isFull = true;
+    }
 }
 
 /*

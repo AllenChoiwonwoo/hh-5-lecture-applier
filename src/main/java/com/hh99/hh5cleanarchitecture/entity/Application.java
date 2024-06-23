@@ -28,7 +28,9 @@ public class Application  extends BaseEntity{
         this.currentApplier = currentApplier;
     }
 
-    public void raseCount() {
-        this.currentApplier += this.currentApplier + 1l;
+    public Application raseCount() {
+        if (this.maxApplier <= this.currentApplier) throw new RuntimeException("수강 가능 인원이 초과되었습니다.");
+        this.currentApplier = this.currentApplier + 1l;
+        return this;
     }
 }
