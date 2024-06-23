@@ -18,9 +18,13 @@ public abstract class BaseEntity {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
     @PrePersist
     public void prePersist() {
         this.createdDate = LocalDateTime.now();
+        this.isDelete = false;
     }
     @PreUpdate
     public void preUpdate(){

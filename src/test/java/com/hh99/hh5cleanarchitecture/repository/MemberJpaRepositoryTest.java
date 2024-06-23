@@ -1,19 +1,18 @@
 package com.hh99.hh5cleanarchitecture.repository;
 
 import com.hh99.hh5cleanarchitecture.entity.Member;
+import com.hh99.hh5cleanarchitecture.infra.MemberJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
-public class MemberRepositoryTest {
+public class MemberJpaRepositoryTest {
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberJpaRepository memberJpaRepository;
 
     @Test
     void saveMember() {
@@ -21,12 +20,12 @@ public class MemberRepositoryTest {
                 .name("allen")
                 .build();
 
-        Member member = memberRepository.save(saveParams);
+        Member member = memberJpaRepository.save(saveParams);
         assert member.getName().equals("allen");
     }
     @Test
     void findAllMameber() {
-        List<Member> all = memberRepository.findAll();
+        List<Member> all = memberJpaRepository.findAll();
         for (Member member : all){
             System.out.println(member);
         }
