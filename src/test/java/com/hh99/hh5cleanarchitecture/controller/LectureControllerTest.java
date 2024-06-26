@@ -60,4 +60,10 @@ class LectureControllerTest {
         ApplyResponse result = mapper.readValue(contentAsString, ApplyResponse.class);
         assertEquals(1l, result.getApplyId());
     }
+
+    @Test
+    void t2() throws JsonProcessingException {
+        ApplyRequest applyRequest = ApplyRequest.builder().userId(1l).sessionId(1l).lectureId(1l).build();
+        System.out.println(mapper.writeValueAsString(applyRequest));
+    }
 }

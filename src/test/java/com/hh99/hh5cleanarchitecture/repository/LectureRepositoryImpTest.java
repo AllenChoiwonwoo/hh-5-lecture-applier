@@ -1,9 +1,12 @@
 package com.hh99.hh5cleanarchitecture.repository;
 
 import com.hh99.hh5cleanarchitecture.entity.Application;
+import com.hh99.hh5cleanarchitecture.entity.Lecture;
 import com.hh99.hh5cleanarchitecture.entity.Session;
 import com.hh99.hh5cleanarchitecture.entity.UserApplication;
+import com.hh99.hh5cleanarchitecture.infra.ApplicationJpaRepository;
 import com.hh99.hh5cleanarchitecture.infra.LectureJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.SessionJpaRepository;
 import com.hh99.hh5cleanarchitecture.infra.UserApplicationJpaRepository;
 import com.hh99.hh5cleanarchitecture.service.LectureRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,9 +30,14 @@ class LectureRepositoryImpTest {
     private LectureJpaRepository lectureJpaRepository;
     @Autowired
     private UserApplicationJpaRepository userApplicationJpaRepository;
+    @Autowired
+    private SessionJpaRepository sessionJpaRepository;
+    @Autowired
+    private ApplicationJpaRepository applicationJpaRepository;
     private UserApplication userApplication;
     private Application application;
     private Session session;
+    private Lecture lecture;
 
     @BeforeEach
     void setUp() {
@@ -45,6 +53,12 @@ class LectureRepositoryImpTest {
                 .build();
 //        session = new Session();
 //        session.setFull();
+
+        session = Session.builder()
+                .sessionId(1l)
+                .lectureId(1l)
+                .isFull(true)
+                .build();
 
     }
 
@@ -68,14 +82,30 @@ class LectureRepositoryImpTest {
 
     @Test
     void isFull() {
+        //given
+        sessionJpaRepository.save(session);
 
+        Boolean isFull = lectureRepository.isFull(session.getId());
+        assert isFull == true;
     }
 
     @Test
     void getApplication() {
+        // given
+        applicationJpaRepository.save(application);
+        // when
+        Application result = lectureRepository.getApplication(application.getSessionId());
+        // then
+        assert application.getSessionId() == result.getSessionId();
     }
 
     @Test
     void getSession() {
+        // given
+        sessionJpaRepository.save(session);
+        // when
+        Session result = lectureRepository.getSession(session.getId());
+        // then
+        assert session.getId() == result.getId();
     }
 }

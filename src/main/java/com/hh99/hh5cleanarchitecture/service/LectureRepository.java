@@ -3,8 +3,6 @@ package com.hh99.hh5cleanarchitecture.service;
 import com.hh99.hh5cleanarchitecture.entity.Application;
 import com.hh99.hh5cleanarchitecture.entity.Session;
 import com.hh99.hh5cleanarchitecture.entity.UserApplication;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 //@Component
 public interface LectureRepository {
@@ -17,4 +15,8 @@ public interface LectureRepository {
     Application getApplication(Long sessionId);
 
     Session getSession(Long sessionId);
+
+    void saveApplication(Application application);
+
+    void saveSession(Session session);
 }

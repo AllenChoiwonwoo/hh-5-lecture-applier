@@ -6,12 +6,14 @@ import com.hh99.hh5cleanarchitecture.entity.Session;
 import com.hh99.hh5cleanarchitecture.entity.UserApplication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LectureService {
     private final LectureRepository lectureRepository;
-    private final LectureChecker lectureChecker;
+    private final LectureChecker lectureApplyHelper;
+    @Transactional
     public UserApplication apply(ApplyRequest applyRequest) {
         /*
         이미 신청했는지 확인
@@ -24,13 +26,22 @@ public class LectureService {
         수강자 명단에 추가
         응답
          */
-        Application application = lectureChecker.checkAvailable(applyRequest);
-        if (application.getCurrentApplier() == application.getMaxApplier()) {
-            Session session =  lectureRepository.getSession(applyRequest.getSessionId());
-            session.setFull();
-        }
+        lectureApplyHelper.checkAvailable(applyRequest);
+        Application application = raseApplierCount(applyRequest.getSessionId());
+        lectureApplyHelper.updateSessionState(applyRequest, application);
         UserApplication result = lectureRepository.addApplier(applyRequest.getUserId(),applyRequest.getLectureId(), applyRequest.getSessionId());
         return result;
+    }
+
+
+
+    @Transactional
+    public Application raseApplierCount(Long sessionId) {
+        Application application = lectureRepository.getApplication(sessionId);
+        if (application.getMaxApplier() <= application.getCurrentApplier())
+            throw new RuntimeException("수강 신청 가능 인원을 초과하였습니다.");
+        lectureRepository.saveApplication(application.raseCount());
+        return application;
     }
 
 }

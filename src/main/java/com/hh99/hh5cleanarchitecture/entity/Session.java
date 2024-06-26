@@ -1,6 +1,7 @@
 package com.hh99.hh5cleanarchitecture.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,6 +32,21 @@ public class Session extends BaseEntity {
 
     public void setFull() {
         this.isFull = true;
+    }
+
+    @Builder
+    public Session(Long sessionId, Long lectureId, Long applyDate, Long startDate, Long endDate, Long maxApplier, Boolean isFull) {
+        this.id = sessionId;
+        this.lectureId = lectureId;
+        this.applyDate = applyDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.maxApplier = maxApplier;
+        this.isFull = isFull;
+    }
+
+    public boolean isAvailable(Long timestamp) {
+        return this.applyDate < timestamp;
     }
 }
 

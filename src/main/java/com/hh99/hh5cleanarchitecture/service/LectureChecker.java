@@ -14,12 +14,16 @@ import static java.util.Objects.nonNull;
 public class LectureChecker {
     private final LectureRepository lectureRepository;
 
-    public Application checkAvailable(ApplyRequest applyRequest) {
-        checkUserApplication(applyRequest);
+    public void checkAvailable(ApplyRequest applyRequest) {
+        checkScadule(applyRequest);
         checkFullBooking(applyRequest);
-        Application application = lectureRepository.getApplication(applyRequest.getSessionId()).raseCount();
-        return application;
+        checkUserApplication(applyRequest);
+    }
 
+    public void checkScadule(ApplyRequest request) {
+        Session session = lectureRepository.getSession(request.getSessionId());
+        boolean result = session.isAvailable(request.getTimestamp());
+        if (result == false) throw new RuntimeException("수강 신청 가능 기간이 아닙니다.");
     }
 
     public void checkFullBooking(ApplyRequest applyRequest) {
@@ -33,6 +37,13 @@ public class LectureChecker {
         UserApplication userApplication = lectureRepository.getApplyRecord(applyRequest.getUserId(), applyRequest.getLectureId());
         if (nonNull(userApplication)){
             throw new RuntimeException("이미 신청한 유저입니다.");
+        }
+    }
+    public void updateSessionState(ApplyRequest applyRequest, Application application) {
+        if (application.getCurrentApplier() == application.getMaxApplier()) {
+            Session session =  lectureRepository.getSession(applyRequest.getSessionId());
+            session.setFull();
+            lectureRepository.saveSession(session);
         }
     }
 }

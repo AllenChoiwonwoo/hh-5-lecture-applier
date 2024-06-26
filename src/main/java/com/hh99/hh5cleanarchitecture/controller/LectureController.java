@@ -17,12 +17,5 @@ public class LectureController {
     public ResponseEntity apply(@RequestBody ApplyRequest applyRequest) {
         UserApplication userApplication = lectureService.apply(applyRequest);
         return ResponseEntity.ok(ApplyResponse.from(userApplication));
-//        return (ResponseEntity) ResponseEntity.ok();
-//        ApplyResponse applyResponse = ApplyResponse.builder()
-//                .applyId(0l)
-//                .lectureId(0l)
-//                .sessionId(0l)
-//                .build();
-//        return ResponseEntity.ok(applyResponse);
     }
 }

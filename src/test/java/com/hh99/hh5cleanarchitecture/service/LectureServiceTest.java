@@ -86,7 +86,6 @@ class LectureServiceTest {
                 .lectureId(applyRequest.getLectureId())
                 .sessionId(applyRequest.getSessionId())
                 .build();
-        given(lectureChecker.checkAvailable(applyRequest)).willReturn(application);
         given(lectureRepository.addApplier(applyRequest.getUserId(), applyRequest.getLectureId(), applyRequest.getSessionId()))
                 .willReturn(ua);
         //when
