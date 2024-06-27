@@ -41,15 +41,15 @@ public class LectureApplyTest {
         lecturePreset = lectureJpaRepository.save(lecture);
         LectureSchedule lectureschedule = LectureSchedule.builder()
                 .lectureId(lecture.getId())
-                .applyDate(System.currentTimeMillis())
+                .registrationStartAt(System.currentTimeMillis())
                 .maxApplier(30l)
                 .isFull(false)
                 .build();
         lectureschedulePreset = lectureScheduleJpaRepository.save(lectureschedule);
         registrationstatus = RegistrationStatus.builder()
-                .currentApplier(0l)
-                .maxApplier(lectureschedulePreset.getMaxApplier())
-                .sessionId(lectureschedulePreset.getId())
+                .currentApplicants(0l)
+                .maxApplicants(lectureschedulePreset.getMaxApplier())
+                .lectureScheduleId(lectureschedulePreset.getId())
                 .build();
         registrationStatusJpaRepository.save(registrationstatus);
     }
