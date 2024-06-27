@@ -1,24 +1,18 @@
 package com.hh99.hh5cleanarchitecture.repository;
 
-import com.hh99.hh5cleanarchitecture.entity.Application;
-import com.hh99.hh5cleanarchitecture.entity.Lecture;
-import com.hh99.hh5cleanarchitecture.entity.Session;
-import com.hh99.hh5cleanarchitecture.entity.UserApplication;
-import com.hh99.hh5cleanarchitecture.infra.ApplicationJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.LectureJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.SessionJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.UserApplicationJpaRepository;
-import com.hh99.hh5cleanarchitecture.service.LectureRepository;
+import com.hh99.hh5cleanarchitecture.domain.entity.LectureSchedule;
+import com.hh99.hh5cleanarchitecture.domain.entity.RegistrationStatus;
+import com.hh99.hh5cleanarchitecture.domain.entity.Lecture;
+import com.hh99.hh5cleanarchitecture.domain.entity.UserEnrollment;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureScheduleJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.RegistrationStatusJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.UserEnrollmentJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.repository.LectureRepositoryImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 //@ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -29,32 +23,32 @@ class LectureRepositoryImpTest {
     @Autowired
     private LectureJpaRepository lectureJpaRepository;
     @Autowired
-    private UserApplicationJpaRepository userApplicationJpaRepository;
+    private UserEnrollmentJpaRepository userEnrollmentJpaRepository;
     @Autowired
-    private SessionJpaRepository sessionJpaRepository;
+    private LectureScheduleJpaRepository lectureScheduleJpaRepository;
     @Autowired
-    private ApplicationJpaRepository applicationJpaRepository;
-    private UserApplication userApplication;
-    private Application application;
-    private Session session;
+    private RegistrationStatusJpaRepository registrationStatusJpaRepository;
+    private UserEnrollment userEnrollment;
+    private RegistrationStatus registrationstatus;
+    private LectureSchedule lectureschedule;
     private Lecture lecture;
 
     @BeforeEach
     void setUp() {
-        userApplication = UserApplication.builder()
+        userEnrollment = UserEnrollment.builder()
                 .userId(1l)
                 .lectureId(1l)
-                .sessionId(1l)
+                .lectureScheduleId(1l)
                 .build();
-        application = Application.builder()
-                .sessionId(1l)
-                .currentApplier(10l)
-                .maxApplier(30l)
+        registrationstatus = RegistrationStatus.builder()
+                .lectureScheduleId(1l)
+                .currentApplicants(10l)
+                .maxApplicants(30l)
                 .build();
-//        session = new Session();
-//        session.setFull();
+//        lectureschedule = new LectureSchedule();
+//        lectureschedule.setFull();
 
-        session = Session.builder()
+        lectureschedule = LectureSchedule.builder()
                 .sessionId(1l)
                 .lectureId(1l)
                 .isFull(true)
@@ -65,47 +59,47 @@ class LectureRepositoryImpTest {
     @Test
     void getApplyRecord() {
         //given
-        UserApplication savedUser = userApplicationJpaRepository.save(userApplication);
-        UserApplication record = lectureRepository.getApplyRecord(savedUser.getUserId(), savedUser.getLectureId());
+        UserEnrollment savedUser = userEnrollmentJpaRepository.save(userEnrollment);
+        UserEnrollment record = lectureRepository.getApplyRecord(savedUser.getUserId(), savedUser.getLectureId());
 
         assert savedUser.getId() == record.getId();
     }
 
     @Test
     void addApplier() {
-        UserApplication save = userApplicationJpaRepository.save(userApplication);
+        UserEnrollment save = userEnrollmentJpaRepository.save(userEnrollment);
         System.out.println(save.getId());
-        assert userApplication.getUserId() == save.getUserId();
-        assert userApplication.getLectureId() == save.getLectureId();
-        assert userApplication.getSessionId() == save.getSessionId();
+        assert userEnrollment.getUserId() == save.getUserId();
+        assert userEnrollment.getLectureId() == save.getLectureId();
+        assert userEnrollment.getLectureScheduleId() == save.getLectureScheduleId();
     }
 
     @Test
     void isFull() {
         //given
-        sessionJpaRepository.save(session);
+        lectureScheduleJpaRepository.save(lectureschedule);
 
-        Boolean isFull = lectureRepository.isFull(session.getId());
+        Boolean isFull = lectureRepository.isFull(lectureschedule.getId());
         assert isFull == true;
     }
 
     @Test
     void getApplication() {
         // given
-        applicationJpaRepository.save(application);
+        registrationStatusJpaRepository.save(registrationstatus);
         // when
-        Application result = lectureRepository.getApplication(application.getSessionId());
+        RegistrationStatus result = lectureRepository.findRegistrationStatusBy(registrationstatus.getLectureScheduleId());
         // then
-        assert application.getSessionId() == result.getSessionId();
+        assert registrationstatus.getLectureScheduleId() == result.getLectureScheduleId();
     }
 
     @Test
     void getSession() {
         // given
-        sessionJpaRepository.save(session);
+        lectureScheduleJpaRepository.save(lectureschedule);
         // when
-        Session result = lectureRepository.getSession(session.getId());
+        LectureSchedule result = lectureRepository.findLectureScheduleBy(lectureschedule.getId());
         // then
-        assert session.getId() == result.getId();
+        assert lectureschedule.getId() == result.getId();
     }
 }

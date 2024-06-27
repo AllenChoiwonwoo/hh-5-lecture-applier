@@ -1,14 +1,14 @@
 package com.hh99.hh5cleanarchitecture.integration;
 
-import com.hh99.hh5cleanarchitecture.controller.ApplyRequest;
-import com.hh99.hh5cleanarchitecture.entity.Application;
-import com.hh99.hh5cleanarchitecture.entity.Lecture;
-import com.hh99.hh5cleanarchitecture.entity.Session;
-import com.hh99.hh5cleanarchitecture.entity.UserApplication;
-import com.hh99.hh5cleanarchitecture.infra.ApplicationJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.LectureJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.SessionJpaRepository;
-import com.hh99.hh5cleanarchitecture.service.LectureService;
+import com.hh99.hh5cleanarchitecture.presentation.dto.ApplyRequest;
+import com.hh99.hh5cleanarchitecture.domain.entity.LectureSchedule;
+import com.hh99.hh5cleanarchitecture.domain.entity.RegistrationStatus;
+import com.hh99.hh5cleanarchitecture.domain.entity.Lecture;
+import com.hh99.hh5cleanarchitecture.domain.entity.UserEnrollment;
+import com.hh99.hh5cleanarchitecture.infra.jpa.RegistrationStatusJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureScheduleJpaRepository;
+import com.hh99.hh5cleanarchitecture.application.LectureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 @SpringBootTest
 public class LectureApplySynchroTest {
@@ -28,13 +26,13 @@ public class LectureApplySynchroTest {
     @Autowired
     LectureJpaRepository lectureJpaRepository;
     @Autowired
-    SessionJpaRepository sessionJpaRepository;
+    LectureScheduleJpaRepository lectureScheduleJpaRepository;
     @Autowired
-    ApplicationJpaRepository applicationJpaRepository;
+    RegistrationStatusJpaRepository registrationStatusJpaRepository;
 
     private Lecture lecturePreset;
-    private Session sessionPreset;
-    private Application application;
+    private LectureSchedule lectureschedulePreset;
+    private RegistrationStatus registrationstatus;
     private Long userId = 5l;
 
     @BeforeEach
@@ -43,19 +41,19 @@ public class LectureApplySynchroTest {
                 .name("테스트 특강")
                 .build();
         lecturePreset = lectureJpaRepository.save(lecture);
-        Session session = Session.builder()
+        LectureSchedule lectureschedule = LectureSchedule.builder()
                 .lectureId(lecture.getId())
-                .applyDate(System.currentTimeMillis())
+                .registrationStartAt(System.currentTimeMillis())
                 .maxApplier(30l)
                 .isFull(false)
                 .build();
-        sessionPreset = sessionJpaRepository.save(session);
-        application = Application.builder()
-                .currentApplier(0l)
-                .maxApplier(sessionPreset.getMaxApplier())
-                .sessionId(sessionPreset.getId())
+        lectureschedulePreset = lectureScheduleJpaRepository.save(lectureschedule);
+        registrationstatus = RegistrationStatus.builder()
+                .currentApplicants(0l)
+                .maxApplicants(lectureschedulePreset.getMaxApplier())
+                .lectureScheduleId(lectureschedulePreset.getId())
                 .build();
-        applicationJpaRepository.save(application);
+        registrationStatusJpaRepository.save(registrationstatus);
     }
 
     @Test
@@ -67,10 +65,10 @@ public class LectureApplySynchroTest {
                 ApplyRequest applyRequest = ApplyRequest.builder()
                         .userId(finalI)
                         .lectureId(lecturePreset.getId())
-                        .sessionId(sessionPreset.getId())
+                        .lectureScheduleId(lectureschedulePreset.getId())
                         .timestamp(System.currentTimeMillis())
                         .build();
-                UserApplication apply = lectureService.apply(applyRequest);
+                UserEnrollment apply = lectureService.apply(applyRequest);
                 System.out.println(apply);
             });
             futures.add(future);

@@ -1,13 +1,10 @@
 package com.hh99.hh5cleanarchitecture.repository;
 
-import com.hh99.hh5cleanarchitecture.entity.Lecture;
-import com.hh99.hh5cleanarchitecture.infra.LectureJpaRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.hh99.hh5cleanarchitecture.domain.entity.Lecture;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
