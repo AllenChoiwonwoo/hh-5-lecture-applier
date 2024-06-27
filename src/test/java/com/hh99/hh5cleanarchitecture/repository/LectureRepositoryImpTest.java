@@ -56,6 +56,7 @@ class LectureRepositoryImpTest {
 
     }
 
+    // fixme : 오류 수정 필요
     @Test
     void getApplyRecord() {
         //given
