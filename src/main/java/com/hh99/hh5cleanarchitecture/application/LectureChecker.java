@@ -21,11 +21,11 @@ public class LectureChecker {
     private final RegistrationStatusRepository registrationStatusRepository;
     private final UserEnrollmentRepository userEnrollmentRepository;
 
-    public void checkAvailable(ApplyRequest applyRequest) {
-        checkScadule(applyRequest);
-        checkFullBooking(applyRequest);
-        checkUserApplication(applyRequest);
-    }
+        public void checkAvailable(ApplyRequest applyRequest) {
+            checkScadule(applyRequest);
+            checkFullBooking(applyRequest);
+            checkUserApplication(applyRequest);
+        }
 
     public void checkScadule(ApplyRequest request) {
         LectureSchedule lectureschedule = lectureScheduleRepository.findLectureScheduleBy(request.getLectureScheduleId());
