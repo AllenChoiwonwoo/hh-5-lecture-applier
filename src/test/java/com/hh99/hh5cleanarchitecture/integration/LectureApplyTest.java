@@ -1,14 +1,14 @@
 package com.hh99.hh5cleanarchitecture.integration;
 
-import com.hh99.hh5cleanarchitecture.controller.ApplyRequest;
-import com.hh99.hh5cleanarchitecture.entity.Application;
-import com.hh99.hh5cleanarchitecture.entity.Lecture;
-import com.hh99.hh5cleanarchitecture.entity.Session;
-import com.hh99.hh5cleanarchitecture.entity.UserApplication;
-import com.hh99.hh5cleanarchitecture.infra.ApplicationJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.LectureJpaRepository;
-import com.hh99.hh5cleanarchitecture.infra.SessionJpaRepository;
-import com.hh99.hh5cleanarchitecture.service.LectureService;
+import com.hh99.hh5cleanarchitecture.presentation.dto.ApplyRequest;
+import com.hh99.hh5cleanarchitecture.domain.entity.LectureSchedule;
+import com.hh99.hh5cleanarchitecture.domain.entity.RegistrationStatus;
+import com.hh99.hh5cleanarchitecture.domain.entity.UserEnrollment;
+import com.hh99.hh5cleanarchitecture.domain.entity.Lecture;
+import com.hh99.hh5cleanarchitecture.infra.jpa.RegistrationStatusJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureJpaRepository;
+import com.hh99.hh5cleanarchitecture.infra.jpa.LectureScheduleJpaRepository;
+import com.hh99.hh5cleanarchitecture.application.LectureService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,13 @@ public class LectureApplyTest {
     @Autowired
     LectureJpaRepository lectureJpaRepository;
     @Autowired
-    SessionJpaRepository sessionJpaRepository;
+    LectureScheduleJpaRepository lectureScheduleJpaRepository;
     @Autowired
-    ApplicationJpaRepository applicationJpaRepository;
+    RegistrationStatusJpaRepository registrationStatusJpaRepository;
 
     private Lecture lecturePreset;
-    private Session sessionPreset;
-    private Application application;
+    private LectureSchedule lectureschedulePreset;
+    private RegistrationStatus registrationstatus;
     private Long userId = 5l;
 
     @BeforeEach
@@ -39,19 +39,19 @@ public class LectureApplyTest {
                 .name("테스트 특강")
                 .build();
         lecturePreset = lectureJpaRepository.save(lecture);
-        Session session = Session.builder()
+        LectureSchedule lectureschedule = LectureSchedule.builder()
                 .lectureId(lecture.getId())
                 .applyDate(System.currentTimeMillis())
                 .maxApplier(30l)
                 .isFull(false)
                 .build();
-        sessionPreset = sessionJpaRepository.save(session);
-        application = Application.builder()
+        lectureschedulePreset = lectureScheduleJpaRepository.save(lectureschedule);
+        registrationstatus = RegistrationStatus.builder()
                 .currentApplier(0l)
-                .maxApplier(sessionPreset.getMaxApplier())
-                .sessionId(sessionPreset.getId())
+                .maxApplier(lectureschedulePreset.getMaxApplier())
+                .sessionId(lectureschedulePreset.getId())
                 .build();
-        applicationJpaRepository.save(application);
+        registrationStatusJpaRepository.save(registrationstatus);
     }
 
     @Test
@@ -60,11 +60,11 @@ public class LectureApplyTest {
         ApplyRequest applyRequest = ApplyRequest.builder()
                 .userId(userId)
                 .lectureId(lecturePreset.getId())
-                .sessionId(sessionPreset.getId())
+                .lectureScheduleId(lectureschedulePreset.getId())
                 .build();
         applyRequest.setTimestamp(System.currentTimeMillis()+1000);
 
-        UserApplication apply = lectureService.apply(applyRequest);
+        UserEnrollment apply = lectureService.apply(applyRequest);
 
         assert Objects.nonNull(apply);
     }
