@@ -18,7 +18,7 @@ import java.util.Optional;
 public class UserEnrollmentRepoImp implements UserEnrollmentRepository {
     private final UserEnrollmentJpaRepository userEnrollmentJpaRepository;
     @Override
-    public UserEnrollment getApplyRecord(Long userId, Long lectureId) {
+    public Optional<UserEnrollment> findByUserIdAndLectureId(Long userId, Long lectureId) {
         return userEnrollmentJpaRepository.findByUserIdAndLectureId(userId, lectureId);
     }
 

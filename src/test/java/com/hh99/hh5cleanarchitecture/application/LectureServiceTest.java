@@ -1,5 +1,8 @@
 package com.hh99.hh5cleanarchitecture.application;
 
+import com.hh99.hh5cleanarchitecture.domain.repository.RegistrationStatusRepository;
+import com.hh99.hh5cleanarchitecture.domain.repository.UserEnrollmentRepository;
+import com.hh99.hh5cleanarchitecture.domain.service.LectureChecker;
 import com.hh99.hh5cleanarchitecture.presentation.dto.ApplyRequest;
 import com.hh99.hh5cleanarchitecture.domain.entity.RegistrationStatus;
 import com.hh99.hh5cleanarchitecture.domain.entity.UserEnrollment;
@@ -10,21 +13,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class LectureServiceTest {
 
     @InjectMocks
+    @Spy
     LectureService lectureService;
     @Mock
     LectureRepository lectureRepository;
     @Mock
+    RegistrationStatusRepository registrationStatusRepository;
+    @Mock
     LectureChecker lectureChecker;
+    @Mock
+    UserEnrollmentRepository userEnrollmentRepository;
 
     private ApplyRequest applyRequest;
 
@@ -50,7 +60,7 @@ class LectureServiceTest {
 //    void fail_apply_1() {
 //        //given
 //        UserEnrollment userApplication = UserEnrollment.builder().build();
-//        given(lectureRepository.getApplyRecord(anyLong(), anyLong())).willReturn(userApplication);
+//        given(lectureRepository.findByUserIdAndLectureId(anyLong(), anyLong())).willReturn(userApplication);
 //        //when, then
 //        assertThrows(RuntimeException.class, () -> {
 //            lectureService.apply(applyRequest);
@@ -60,7 +70,7 @@ class LectureServiceTest {
 //    @Test
 //    void fail_apply_2() {
 //        //given
-//        given(lectureRepository.getApplyRecord(anyLong(), anyLong())).willReturn(null);
+//        given(lectureRepository.findByUserIdAndLectureId(anyLong(), anyLong())).willReturn(null);
 //        given(lectureRepository.isFull(anyLong())).willReturn(true);
 //        //when, then
 //        assertThrows(RuntimeException.class, () -> {
@@ -73,18 +83,29 @@ class LectureServiceTest {
     void success_apply_1() {
         //given
         RegistrationStatus registrationstatus = RegistrationStatus.builder()
-                .currentApplier(0l)
-                .maxApplier(30l)
-                .sessionId(1l)
+                .currentApplicants(0l)
+                .maxApplicants(30l)
+                .lectureScheduleId(1l)
                 .build();
         UserEnrollment ua = UserEnrollment.builder()
                 .applyId(1l)
                 .userId(applyRequest.getUserId())
                 .lectureId(applyRequest.getLectureId())
-                .sessionId(applyRequest.getLectureScheduleId())
+                .lectureScheduleId(applyRequest.getLectureScheduleId())
                 .build();
-        given(lectureRepository.addApplier(applyRequest.getUserId(), applyRequest.getLectureId(), applyRequest.getLectureScheduleId()))
-                .willReturn(ua);
+        given(lectureService.raiseApplicantsCount(anyLong())).willReturn(registrationstatus);
+        given(userEnrollmentRepository.save(
+                UserEnrollment.builder()
+                        .lectureId(ua.getLectureId())
+                        .lectureScheduleId(ua.getLectureScheduleId())
+                        .userId(ua.getUserId())
+                        .applyId(ua.getId())
+                        .build()
+        )).willReturn(ua);
+//        given(lectureRepository.addApplier(applyRequest.getUserId(), applyRequest.getLectureId(), applyRequest.getLectureScheduleId()))
+//                .willReturn(ua);
+//        given(registrationStatusRepository.findRegistrationStatusBy(registrationstatus.getId()))
+
         //when
         UserEnrollment result = lectureService.apply(applyRequest);
         //then

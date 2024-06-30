@@ -46,7 +46,7 @@ class LectureControllerTest {
     void apply() throws Exception {
         //given
         ApplyRequest applyRequest = ApplyRequest.builder().userId(1l).lectureScheduleId(1l).lectureId(1l).build();
-        UserEnrollment ua = UserEnrollment.builder().applyId(1l).userId(1l).lectureId(1l).sessionId(1l).build();
+        UserEnrollment ua = UserEnrollment.builder().applyId(1l).userId(1l).lectureId(1l).lectureScheduleId(1l).build();
         given(lectureService.apply(applyRequest)).willReturn(ua);
         //when
         ResultActions resultActions = mockMvc.perform(post("/lectures/apply")
