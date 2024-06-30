@@ -68,10 +68,10 @@ class LectureRepositoryImpTest {
 
     // fixme : 오류 수정 필요
 //    @Test
-//    void getApplyRecord() {
+//    void findByUserIdAndLectureId() {
 //        //given
 //        UserEnrollment savedUser = userEnrollmentJpaRepository.save(userEnrollment);
-//        UserEnrollment record = lectureRepository.getApplyRecord(savedUser.getUserId(), savedUser.getLectureId());
+//        UserEnrollment record = lectureRepository.findByUserIdAndLectureId(savedUser.getUserId(), savedUser.getLectureId());
 //
 //        assert savedUser.getId() == record.getId();
 //    }

@@ -19,7 +19,7 @@ public class LectureSchedule extends BaseEntity {
     @Column(name = "lecture_id")
     private Long lectureId;
     @Column(name = "registration_start_at")
-    private Long registration_start_at;
+    private Long registrationStartAt;
     @Column(name = "start_at")
     private Long startAt;
     @Column(name = "end_at")
@@ -38,19 +38,24 @@ public class LectureSchedule extends BaseEntity {
     public LectureSchedule(Long sessionId, Long lectureId, Long registrationStartAt, Long startAt, Long endAt, Long maxApplier, Boolean isFull) {
         this.id = sessionId;
         this.lectureId = lectureId;
-        this.registration_start_at = registrationStartAt;
+        this.registrationStartAt = registrationStartAt;
         this.startAt = startAt;
         this.endAt = endAt;
         this.maxApplier = maxApplier;
         this.isFull = isFull;
     }
 
-    public boolean isAvailable(Long timestamp) {
-        return this.registration_start_at < timestamp;
+    public void isRegistrationStart(Long applyAt) {
+        if (this.registrationStartAt > applyAt) throw new RuntimeException("수강신청 가능 기간이 아닙니다.");
     }
 
-    public void checkFull(Long maxApplicants, Long currentApplicants) {
+    public void setIsFull(Long maxApplicants, Long currentApplicants) {
         this.isFull = maxApplicants <= currentApplicants;
+    }
+
+    public boolean setIsFull(boolean b) {
+        this.isFull = b;
+        return isFull;
     }
 }
 

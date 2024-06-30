@@ -29,8 +29,13 @@ public class RegistrationStatus extends BaseEntity {
     }
 
     public RegistrationStatus raseCount() {
-        if (this.maxApplicants <= this.currentApplicants) throw new RuntimeException("수강 가능 인원이 초과되었습니다.");
+        if (isFull()) {
+            throw new RuntimeException("수강 가능 인원이 초과되었습니다.");
+        }
         this.currentApplicants = this.currentApplicants + 1l;
         return this;
+    }
+    public boolean isFull() {
+        return this.maxApplicants <= this.currentApplicants;
     }
 }
