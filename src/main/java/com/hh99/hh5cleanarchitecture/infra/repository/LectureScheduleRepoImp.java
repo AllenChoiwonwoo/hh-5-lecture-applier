@@ -31,7 +31,7 @@ public class LectureScheduleRepoImp implements LectureScheduleRepository{
     }
 
     @Override
-    public void saveLectureSchedule(LectureSchedule lectureschedule) {
+    public void save(LectureSchedule lectureschedule) {
         lectureScheduleJpaRepository.save(lectureschedule);
     }
 }

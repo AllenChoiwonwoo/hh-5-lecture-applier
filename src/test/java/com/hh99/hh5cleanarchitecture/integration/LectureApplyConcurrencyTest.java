@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @SpringBootTest
-public class LectureApplySynchroTest {
+public class LectureApplyConcurrencyTest {
 
     @Autowired
     LectureService lectureService;
@@ -68,8 +68,12 @@ public class LectureApplySynchroTest {
                         .lectureScheduleId(lectureschedulePreset.getId())
                         .timestamp(System.currentTimeMillis())
                         .build();
-                UserEnrollment apply = lectureService.apply(applyRequest);
-                System.out.println(apply);
+                try {
+                    UserEnrollment apply = lectureService.apply(applyRequest);
+                    System.out.println(apply);
+                }catch (RuntimeException e){
+                    System.out.println("ERROR : " + e.getMessage());
+                }
             });
             futures.add(future);
         }
@@ -85,6 +89,5 @@ public class LectureApplySynchroTest {
             e.printStackTrace();
 //            assert
         }
-
     }
 }

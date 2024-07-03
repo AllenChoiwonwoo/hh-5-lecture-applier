@@ -1,8 +1,6 @@
 package com.hh99.hh5cleanarchitecture.domain.repository;
 
 import com.hh99.hh5cleanarchitecture.domain.entity.LectureSchedule;
-import com.hh99.hh5cleanarchitecture.domain.entity.RegistrationStatus;
-import com.hh99.hh5cleanarchitecture.domain.entity.UserEnrollment;
 
 public interface LectureScheduleRepository {
 
@@ -10,5 +8,5 @@ public interface LectureScheduleRepository {
 
     LectureSchedule findLectureScheduleBy(Long sessionId);
 
-    void saveLectureSchedule(LectureSchedule lectureschedule);
+    void save(LectureSchedule lectureschedule);
 }
